@@ -1,0 +1,11 @@
+develop_server.sh
+crowsfoot/
+pelican-plugins/
+cache/*
+cache/PagesGenerator-Readers/
+cache/ArticlesGenerator-Readers/
+Makefile
+makethis.sh
+fabfile.*
+*.pid
+content/.ipynb_checkpoints/*

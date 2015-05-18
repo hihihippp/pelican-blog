@@ -1,0 +1,131 @@
+Title: Why visualizing data matters
+Date: 2015-05-18
+Tags: R, visualization, diagnostics
+Slug: visualization-diagnostics
+
+```{r, echo=TRUE,message=FALSE}
+library(dplyr)
+library(tidyr)
+library(ggplot2)
+library(broom)
+```
+```{r, echo = FALSE}
+library(knitr)
+
+theme_update(plot.background = element_rect(fill = "transparent", colour = NA))
+opts_chunk$set(dev.args=list(bg="transparent"))
+```
+
+```{r, echo=FALSE}
+data(anscombe)
+
+df <- anscombe %>%
+  mutate(observation = seq_len(n())) %>%
+  gather(key, value, -observation) %>%
+  separate(key, c("variable", "set"), 1, convert = TRUE) %>%
+  mutate(set = c("I", "II", "III", "IV")[set]) %>%
+  spread(variable, value)
+```
+
+Visualizing data matters: Bla bla
+
+[read this](https://www.nosm.ca/uploadedFiles/Research/Northern_Health_Research_Conference/Past_Conferences/2008/WEAVER%20Bruce.pdf)
+
+
+```{r data}
+head(df)
+```
+
+```{r sum_stats}
+agg = df %>%
+  group_by(set) %>%
+  summarise(x_mean = mean(x), x_sd = sd(x), y_mean = mean(y), y_sd = sd(y))
+agg
+```
+Might conclude it's the same data. 
+
+```{r lm_sum}
+lr = df %>%
+  group_by(set) %>% 
+  do(mod = lm(y ~ x, data = .)) %>%
+  mutate(intercept = summary(mod)$coeff[1], slope = summary(mod)$coeff[2]) %>%
+  glance(mod) %>%
+  select(set, intercept, slope, adj.r.squared, AIC)
+lr
+```
+
+
+### Diagnostics
+
+```{r}
+diag = df %>%
+  group_by(set) %>%
+  do(mod = lm(y ~ x, data = .)) %>%
+  augment(., mod) %>%
+  select(set, x, .resid, .hat, .cooksd) 
+head(diag)
+```
+```{r}
+means = diag %>% group_by(set) %>% summarise(mhat = mean(.hat, na.rm=TRUE), mcooksd = mean(.cooksd, na.rm = TRUE))
+diag = merge(diag, means)
+```
+```{r resplot, fig.width=16, fig.height=6}
+ggplot(diag, aes(x=x, y=.resid)) +
+  geom_point() +
+  facet_grid(~set) + 
+  geom_hline(aes(yintercept = 0)) +
+  ylim(-3.5,3.5) +
+  ggtitle("Residual plot of all sets")
+```
+Hat values measure leverage, more than twice the average are noteworthy.
+
+```{r hatplot, fig.width=12, fig.height=4}
+ggplot(diag, aes(x=x, y=.hat)) +
+  geom_point() +
+  facet_grid(~set) + 
+  ggtitle("Hat plot of all sets") +
+  geom_line(aes(y=mhat*2), col ="red")
+
+```
+Values over 1, or over $4/n$, measures influence
+```{r cookplots, fig.width=12, fig.height=4}
+ggplot(diag, aes(x=x, y=.cooksd)) +
+  geom_point() +
+  facet_grid(~set) + 
+  ggtitle("Cook's d plot of all sets") +
+  geom_line(aes(y=1))
+```
+
+```{r plots}
+ggplot(df, aes(x=x, y=y)) + 
+  geom_point() + 
+  geom_smooth(method = "lm", se = FALSE) +
+  facet_grid(~set)
+```
+
+### Second Set
+```{r 2set, fig.width = 6, fig.height=4}
+set = filter(df, set == "II")
+ggplot(set, aes(x=x, y=y)) + 
+  geom_point() +
+  geom_smooth(method = "lm", formula = y ~ poly(x,2))
+```
+
+
+```{r 3set, fig.width = 6, fig.height=4}
+set = filter(df, set == "III")
+ggplot(set, aes(x=x, y=y)) + 
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE) +
+  geom_smooth(data = filter(set, observation != 3), method = "lm", col ="red")
+```
+
+```{r 4set, fig.width = 6, fig.height=4}
+set = filter(df, set == "IV")
+point = data.frame(observation = 12, set = "IV", x = 19, y = 3)
+set = rbind(set, point)
+ggplot(set, aes(x=x, y=y)) + 
+  geom_point() +
+  geom_smooth(data = filter(set, observation != 12),method = "lm", se = FALSE) +
+  geom_smooth(data = filter(set, observation != 8), method = "lm", col ="red", se = FALSE)
+```

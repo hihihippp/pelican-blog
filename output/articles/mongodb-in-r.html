@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+      <title>Till Bergmann</title>
+      <link href='http://fonts.googleapis.com/css?family=Open+Sans:400italic,600italic,700italic,400,600,700' rel='stylesheet' type='text/css' />
+      <link href='http://fonts.googleapis.com/css?family=Merriweather:300' rel='stylesheet' type='text/css'/>
+      <link href='http://fonts.googleapis.com/css?family=Source+Code+Pro:200,400,700' rel='stylesheet' type='text/css'/>
+      <link rel="stylesheet" type="text/css" href="../theme/css/icons.css"/>
+      <link rel="stylesheet" type="text/css" href="../theme/css/styles.css"/>
+      <meta charset="utf-8" />
+  </head>
+
+  <body id="index">
+    <!-- header -->
+    <header class="siteheader">
+      <!-- site image -->
+
+      <div class = "sitebanner">
+        <h1><a class="sitetitle nodec" href="..">Till Bergmann</a></h1>
+        <h3 class ="sitesubtitle"></h3>
+        <!-- nav -->
+        <nav class="menu">
+          <ul>
+            <!-- menu items-->
+            <!--pages-->
+                <li><a class="nodec" href="../pages/about-me.html">About Me</a></li>
+                <li><a class="nodec" href="../pages/cv.html">CV</a></li>
+                <li><a class="nodec" href="../pages/projects.html">Projects</a></li>
+                <li><a class="nodec" href="../pages/resources.html">Resources</a></li>
+            <!-- services icons -->
+              <li><a class="nodec icon-mail-alt" href="mailto:tbergmann@ucmerced.edu"></a></li>
+              <li><a class="nodec icon-github" href="https://github.com/tillbe"></a></li>
+              <li><a class="nodec icon-twitter" href="http://twitter.com/till_be"></a></li>
+          </ul>
+        </nav>
+      </div> <!-- sitebanner -->
+    </header>
+
+    <!-- content -->
+
+<section class="content">
+
+  <h3 class="posttitle">
+    <a class="nodec" href="/articles/mongodb-in-r.html" rel="bookmark" title="Permalink to Accessing MongoDB from R with mongolite">
+      Accessing MongoDB from R with mongolite
+    </a>
+  </h3>
+
+  <div class="postinfo">
+    <p class="published" title="2015-05-18T00:00:00+02:00">
+      Mon 18 May 2015
+    </p>
+
+  </div><!-- .postinfo -->
+
+  <div class="article">
+    <p>Recently, I have moved away from text files as data storage, and started using <a href="https://www.mongodb.org/">MongoDB</a>. While there are already two R packages (<code>RMongo</code> and <code>rmongodb</code>) interfacing with MongoDB, I was never completed satified with them - especially in comparison to the excellent <a href="http://api.mongodb.org/python/current/">PyMongo</a>. A couple of days ago, a new package, <code>mongolite</code>, was released and seems very promising.</p>
+<p>Here, I quickly want to showcase some of the functions of mongolite, using <a href="http://en.wikipedia.org/wiki/Iris_flower_data_set">Fisher's Iris data set</a>. </p>
+<div class="highlight"><pre>data<span class="p">(</span>iris<span class="p">)</span>
+<span class="c1"># remove . to avoid problems with MongoDBs naming structure</span>
+<span class="kp">names</span><span class="p">(</span>iris<span class="p">)[</span><span class="m">1</span><span class="o">:</span><span class="m">4</span><span class="p">]</span> <span class="o">=</span> <span class="kp">gsub</span><span class="p">(</span><span class="s">&quot;[.]&quot;</span><span class="p">,</span><span class="s">&quot;&quot;</span><span class="p">,</span><span class="kp">names</span><span class="p">(</span>iris<span class="p">)[</span><span class="m">1</span><span class="o">:</span><span class="m">4</span><span class="p">]</span> <span class="p">)</span> 
+<span class="kp">head</span><span class="p">(</span>iris<span class="p">)</span>
+</pre></div>
+
+
+<div class="highlight"><pre>##   SepalLength SepalWidth PetalLength PetalWidth Species
+## 1         5.1        3.5         1.4        0.2  setosa
+## 2         4.9        3.0         1.4        0.2  setosa
+## 3         4.7        3.2         1.3        0.2  setosa
+## 4         4.6        3.1         1.5        0.2  setosa
+## 5         5.0        3.6         1.4        0.2  setosa
+## 6         5.4        3.9         1.7        0.4  setosa
+</pre></div>
+
+
+<p>First, we need to insert the data from R into a new collection in MongoDB. This is done by first establishing a connection to the collection in the database, and then calling the <code>insert</code> function on the connection handler. </p>
+<div class="highlight"><pre><span class="kn">library</span><span class="p">(</span>mongolite<span class="p">)</span>
+<span class="kt">c</span> <span class="o">=</span> mongo<span class="p">(</span>collection <span class="o">=</span> <span class="s">&quot;iris&quot;</span><span class="p">,</span> db <span class="o">=</span> <span class="s">&quot;tutorials&quot;</span><span class="p">)</span>
+<span class="kt">c</span><span class="o">$</span>insert<span class="p">(</span>iris<span class="p">)</span>
+<span class="c1">## </span>
+Complete<span class="o">!</span> Processed total of <span class="m">150</span> rows.
+<span class="c1">## [1] TRUE</span>
+</pre></div>
+
+
+<p>We get some nice feedback from the function, showing us that we inserted 150 rows (which is the total number of rows in the Iris data set). Let's start exploring the data with <code>mongolite</code>. You can easily get the total number of rows, as well as the unique values within the <code>Species</code> column/field: </p>
+<div class="highlight"><pre><span class="kt">c</span><span class="o">$</span>count<span class="p">()</span>
+<span class="c1">## [1] 150</span>
+<span class="kt">c</span><span class="o">$</span>distinct<span class="p">(</span><span class="s">&quot;Species&quot;</span><span class="p">)</span>
+<span class="c1">## [1] &quot;setosa&quot;     &quot;versicolor&quot; &quot;virginica&quot;</span>
+</pre></div>
+
+
+<p>It's also possible to utilize MongoDB's aggregate function through <code>$aggregate</code>:</p>
+<div class="highlight"><pre><span class="kt">c</span><span class="o">$</span>aggregate<span class="p">(</span><span class="s">&#39;[{&quot;$group&quot;: {</span>
+<span class="s">                &quot;_id&quot;:&quot;$Species&quot;, </span>
+<span class="s">                &quot;count&quot;: {&quot;$sum&quot;:1}, </span>
+<span class="s">                &quot;avgPetalLength&quot;:{&quot;$avg&quot;:&quot;$PetalLength&quot;}</span>
+<span class="s">              }}]&#39;</span><span class="p">)</span>
+</pre></div>
+
+
+<div class="highlight"><pre>## 
+ Found 3 records...
+ Imported 3 records. Simplifying into dataframe...
+</pre></div>
+
+
+<div class="highlight"><pre>##          _id count avgPetalLength
+## 1  virginica    50          5.552
+## 2 versicolor    50          4.260
+## 3     setosa    50          1.462
+</pre></div>
+
+
+<p>Of course, with a small data set such as the Iris data, there is no drawback in simply doing the aggregating in <code>dplyr</code>, but if you are dealing with a big data set, querying the MongoDB database directly might give you some performance benefits, as not all the data has to be loaded into memory.</p>
+<div class="highlight"><pre>iris <span class="o">%&gt;%</span>
+  group_by<span class="p">(</span>Species<span class="p">)</span> <span class="o">%&gt;%</span>
+  summarise<span class="p">(</span>count <span class="o">=</span> n<span class="p">(),</span> avg <span class="o">=</span> <span class="kp">mean</span><span class="p">(</span>PetalLength<span class="p">))</span>
+</pre></div>
+
+
+<div class="highlight"><pre>## Source: local data frame [3 x 3]
+## 
+##      Species count   avg
+## 1     setosa    50 1.462
+## 2 versicolor    50 4.260
+## 3  virginica    50 5.552
+</pre></div>
+
+
+<p>Similary, let's suppose we don't need all columns/fields for an analysis. For example, maybe we're only interesting in the sepal width for one particular analysis. Instead of loading all the data into memory, we can use <code>mongolite</code> to only return chosen fields:</p>
+<div class="highlight"><pre>sw <span class="o">=</span> <span class="kt">c</span><span class="o">$</span>find<span class="p">(</span><span class="s">&#39;{}&#39;</span><span class="p">,</span> <span class="s">&#39;{&quot;SepalWidth&quot;: 1, &quot;Species&quot;: 1, &quot;_id&quot;: 0}&#39;</span><span class="p">)</span>
+<span class="c1">## </span>
+ Found <span class="m">150</span> records...
+ Imported <span class="m">150</span> records. Simplifying into dataframe...
+</pre></div>
+
+
+<div class="highlight"><pre>ggplot<span class="p">(</span>sw<span class="p">,</span> aes<span class="p">(</span>x <span class="o">=</span> Species<span class="p">,</span> y <span class="o">=</span> SepalWidth<span class="p">))</span> <span class="o">+</span> 
+         geom_boxplot<span class="p">()</span>
+</pre></div>
+
+
+<p><img alt="plot of chunk sepalwidth_plot" src="../figure/mongolite/sepalwidth_plot-1.png" /> </p>
+<p>Of course, you can also update and remove entries in your database, as well as other functions. If you'd like to know more, have a look at the package on <a href="https://github.com/jeroenooms/mongolite">github</a> and <a href="http://cran.r-project.org/web/packages/mongolite/">CRAN</a>.</p>
+  </div><!-- .content -->
+
+</section>
+
+
+    <!-- footer -->
+    <footer>
+      <p>
+        © Till Bergmann.
+        Generated by <a href= "http://docs.getpelican.com/">Pelican</a> with
+        <a href="http://github.com/porterjamesj/crowsfoot">crowsfoot</a> theme.
+      </p>
+    </footer>
+  </body>
+</html>

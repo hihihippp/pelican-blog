@@ -1,0 +1,112 @@
+Title: Bar plots are the new pie charts
+Date: 2015-05-18
+Tags: R, visualization
+Slug: barplots-are-pies
+
+```{r, echo = FALSE}
+library(knitr)
+library(knitcitations)
+```
+
+A recent article titled [*Beyond bar and line graphs: Time for a new data presentation paradigm*](http://dx.doi.org/10.1371/journal.pbio.1002128) `r citep("10.1371/journal.pbio.1002128")` led me to explore some of the pitfalls of bar plots as opposed to other graphs such as box plots or dot plots. Bar plots are incredibly common in academic literature - the authors found that 85% of papers in their analysis used at least one bar plot to display data. Why is that bad? Well, bar plots only show aggregated data: Usually the mean and either the standard deviation or standard error. There are (at least) three drawbacks of this:
+
+* It doesn't provide more information than pure numbers. Visualizing a mean of 10.34 and a standard deviation of 0.56 does not provide you any more information than simply writing it down.
+* Information is lost: Bar plots don't show any information about sample size or the distribution of data (more below).
+* Bad data-ink ratio: A lot of ink is used to not display additional information.
+
+In this post, I want to recreate some of the points made in the paper, and show some hands-on R code to illustrate the disadvantages of bar plots. 
+
+First, we load the necessary packages and create some test data:
+```{r, echo=TRUE,message=FALSE}
+library(dplyr)
+library(ggplot2)
+library(tidyr)
+```
+```{r, echo = FALSE}
+
+theme_update(plot.background = element_rect(fill = "transparent", colour = NA))
+opts_chunk$set(dev.args=list(bg="transparent"))
+```
+```{r}
+set.seed(42)
+df = data.frame(male   =   rnorm(20, mean = 20, sd = 2.5), 
+                female = c(rnorm(10, mean = 30, sd = 0.5), 
+                           rnorm(10, mean = 25, sd = 0.5)))
+df = gather(df, group, rt)
+head(df)
+```
+
+The test data consists of some random data and two groups, `male` and `gender`. Let's pretend that we're interested in the differences between the two genders, and that the measurements `rt` are reaction times of participants in our experiments.
+
+First, let's plot a standard bar plot showing the mean of the reaction times for each group. To do so in `ggplot2`, we aggregate the data:
+
+```{r}  
+agg = df %>%
+    group_by(group) %>%
+    summarise(mean = mean(rt), sd = sd(rt))
+agg
+```
+
+From the aggregated data, we can see that the mean for males is lower than for females, but both have the same standard deviation. If we visualize these measurements, we get the following plots:
+
+```{r barplot}
+ggplot(agg, aes(y=mean, x=group, fill = group)) +
+  geom_bar(stat = "identity", position = "dodge") +
+  geom_errorbar(aes(ymax = mean + sd, ymin = mean - sd ), width = 0.25) 
+```
+
+Not that the plot doesn't give us more information than the aggregated data frame `agg`! In fact, one could argue that the numbers are more precise and informative than the bar plot. However, this is what we often find in the literature. A slightly different visual representation showing the same information is this plot:
+
+```{r meanplot}
+ggplot(agg, aes(y=mean, x=group, col = group)) +
+  geom_point(size = 5) +
+  geom_errorbar(aes(ymax = mean + sd, ymin = mean -sd ), 
+                width = 0.25) +
+  ylim(0, 32)
+```
+
+The only advantage of this plot is a more economoc data-ink ratio, but it doesn't give us any more idea about the distribution of the data than the bar plot (they also look like the TIE fighers in Star Wars...). Box plots, though a little harder to interpret, are useful to visualize the distribution of points:
+
+```{r boxplot}
+ggplot(df, aes(x = group, y = rt, col =group)) +
+  stat_boxplot(geom ='errorbar') +
+  geom_boxplot()
+```
+
+What information does the boxplot add? Well, we can see that for males, we get values as low as below 15, and as high as above 25. Most of the datapoints seem to be between 19 and 23. For females, the data seems to be tigher, between 24 and 32. 
+
+While the boxplot is a definitive improvement over the two previous plots, it still doesn't show us the whole distribution: What exactly is going on in between the first and third quantile? What's the sample size of each group? Is it the same?
+
+How can we visualize all this information? Univariate dot plots! Simply plot all the data points individually, and jitter them around a little as to avoid overlap:
+
+```{r dotplot}
+gp = ggplot(df, aes(x = group, y = rt, col = group)) + 
+     geom_jitter(size = 3, position = position_jitter(width = .25))
+gp 
+```
+
+Woah. The distribution for females is bimodal! Probably not a huge surprise if you looked at how we generated the data, but not possible to see on any of the previous plots or the summary statistics. More importantly, if you present this data people won't have immediate access to the data to check for bimodaility, and I hope you didn't generate the data either...
+
+Why do we care that the data is bimodal? Maybe it's just a fluke. Maybe there is a latent variable that influences reaction times more than gender - maybe age, or exposure to whatever you're testing. 
+
+The dot plot additionally shows the distribution of the individual points and the sample size. In this case, the sample size of the two groups is the same, but it could very well be different. 
+
+If needed, you can also add measures of central tendencies such as the mean yourself. This makes it even more apparent that the female distribution is bimodal:
+
+```{r dotplot2}
+gp + geom_errorbar(stat = "hline", yintercept = "mean",
+                   aes(ymax=..y..,ymin=..y..),
+                   width = 0.5, col = "black")
+```
+
+That's it! 
+
+**Summary**: Bar charts are bad, dot plots are awesome. Box plots are okay. They became more useful for large *n*, when dot plots become too cluttered (although this takes a loooong time). Of course, there will always be some debate as to which style of graph is more aesthetically pleasing - but I hope I have shown why dot plots provide more and better information that bar plots. If you're interested in more examples, I can recommend reading the original article.
+
+### Further Reading:
+
+[Dot Plots: A Useful Alternative to Bar Charts](http://www.perceptualedge.com/articles/b-eye/dot_plots.pdf)
+
+```{r, results='asis', echo=FALSE}
+bibliography()
+```

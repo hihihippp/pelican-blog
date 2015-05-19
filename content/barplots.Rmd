@@ -87,7 +87,7 @@ ggplot(df, aes(x = group, y = rt, col =group)) +
   ggtitle("Boxplot")
 ```
 
-What information does the box plot add? Well, we can see that for females, we get values as low as below 15, and as high as above 25. Most of the datapoints seem to be between 19 and 23. For males, the data seems to be tighter, between 24 and 32 (despited the same standard variation!?)  
+What information does the box plot add? Well, we can see that for females, we get values as low as below 15, and as high as above 25. Most of the datapoints seem to be between 19 and 23. For males, the data seems to be tighter, between 24 and 32 (despite the same standard variation!?)  
 While the box plot is a definitive improvement over the two previous plots, it still doesn't show us the whole distribution: What exactly is going on between the first and third quantile? How many data points are between 15 and 19 (the bottom whisker for females)?  
 How can we visualize all this information? Univariate dot plots! Simply plot all the data points individually, and jitter them around a little to avoid overlap:
 
@@ -102,7 +102,7 @@ Woah. The distribution for males is bimodal! Probably not a huge surprise if you
 
 The dot plot additionally shows the distribution of the individual points (to check for outliers) and the sample size.  In this case, the sample size of the two groups is the same, but it could very well be different. 
 
-If needed, you can also add measures of central tendencies such as the mean yourself. This makes it even more apparent that the female distribution is bimodal:
+If needed, you can also add measures of central tendencies such as the mean yourself. This makes it even more apparent that the male distribution is bimodal:
 
 ```{r dotplot2}
 gp + geom_errorbar(stat = "hline", yintercept = "mean",
@@ -111,7 +111,7 @@ gp + geom_errorbar(stat = "hline", yintercept = "mean",
     ggtitle("Dot plot with mean")
 ```
 
-That's it! I hope I could show why relying on summary statistics and statistical tests isn't always enough. Even visualizing the data with inadequate graphs such as bar plots is not sufficient. Both box plots and especially univariate dot plots can tell you more about the underlying distribution of your data, and might reveal some properties that have to taken into account. As a final note, there are of course other ways to test for bimodality, such as histograms. Univariate dot plots, however, are more versatile: Check the original paper for more examples, if you're interested!
+That's it! I hope I could show why relying on summary statistics and statistical tests isn't always enough. Even visualizing the data with inadequate graphs such as bar plots is not sufficient. Both box plots and especially univariate dot plots can tell you more about the underlying distribution of your data, and might reveal some properties that have to taken into account. As a final note, there are of course other ways to check for bimodality, such as histograms. Univariate dot plots, however, are more versatile: Check the original paper for more [examples](http://dx.doi.org/10.1371/journal.pbio.1002128.g001), if you're interested!
 
 ### Alternative: Cleveland Dot Plot
 

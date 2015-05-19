@@ -78,7 +78,7 @@ ggplot(agg, aes(y=mean, x=group, col = group)) +
   ylim(0, 32)
 ```
 
-The only advantage of this plot is a more economoc data-ink ratio, but it doesn't give us any more idea about the distribution of the data than the bar plot (they also look like the TIE fighers in Star Wars...). Box plots, on the other hand, provide more information about the underlying distribution, emphasizing interquartile ranges and the median (see `ggplot2`'s [man page](http://docs.ggplot2.org/0.9.3.1/geom_boxplot.html) for more info):
+The only advantage of this plot is a more economoc data-ink ratio, but it doesn't give us any more idea about the distribution of the data than the bar plot (they also look like the TIE fighers in Star Wars...). Box plots, on the other hand, provide more information about the underlying distribution, emphasizing interquartile ranges and the median (see `ggplot2`'s [help page](http://docs.ggplot2.org/0.9.3.1/geom_boxplot.html) for more info):
 
 ```{r boxplot}
 ggplot(df, aes(x = group, y = rt, col =group)) +

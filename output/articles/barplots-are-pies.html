@@ -139,7 +139,7 @@ agg
 
 
 <p><img alt="plot of chunk meanplot" src="../figure/barplots/meanplot-1.png" /> </p>
-<p>The only advantage of this plot is a more economoc data-ink ratio, but it doesn't give us any more idea about the distribution of the data than the bar plot (they also look like the TIE fighers in Star Wars...). Box plots, on the other hand, provide more information about the underlying distribution, emphasizing interquartile ranges and the median (see <code>ggplot2</code>'s <a href="http://docs.ggplot2.org/0.9.3.1/geom_boxplot.html">man page</a> for more info):</p>
+<p>The only advantage of this plot is a more economoc data-ink ratio, but it doesn't give us any more idea about the distribution of the data than the bar plot (they also look like the TIE fighers in Star Wars...). Box plots, on the other hand, provide more information about the underlying distribution, emphasizing interquartile ranges and the median (see <code>ggplot2</code>'s <a href="http://docs.ggplot2.org/0.9.3.1/geom_boxplot.html">help page</a> for more info):</p>
 <div class="highlight"><pre>ggplot<span class="p">(</span>df<span class="p">,</span> aes<span class="p">(</span>x <span class="o">=</span> group<span class="p">,</span> y <span class="o">=</span> rt<span class="p">,</span> col <span class="o">=</span>group<span class="p">))</span> <span class="o">+</span>
   stat_boxplot<span class="p">(</span>geom <span class="o">=</span><span class="s">&#39;errorbar&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="c1"># adds whiskers to the lines</span>
   geom_boxplot<span class="p">()</span> <span class="o">+</span>

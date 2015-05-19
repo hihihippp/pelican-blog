@@ -75,32 +75,20 @@
 
 
 <p>First, we need to insert the data from R into a new collection in MongoDB. This is done by first establishing a connection to the collection in the database, and then calling the <code>insert</code> function on the connection handler. </p>
-<div class="highlight"><pre>## Warning: Failed to connect to: ipv4 127.0.0.1:27017, error: 36, Operation now in progress
-</pre></div>
-
-
-<div class="highlight"><pre>## Error: Failed to connect to target host: localhost:27017
-</pre></div>
-
-
-<div class="highlight"><pre><span class="cp">##</span><span class="c"> Error in c$drop: object of type &#39;builtin&#39; is not subsettable</span><span class="x"></span>
-</pre></div>
-
-
 <div class="highlight"><pre><span class="kn">library</span><span class="p">(</span>mongolite<span class="p">)</span>
 <span class="kt">c</span> <span class="o">=</span> mongo<span class="p">(</span>collection <span class="o">=</span> <span class="s">&quot;iris&quot;</span><span class="p">,</span> db <span class="o">=</span> <span class="s">&quot;tutorials&quot;</span><span class="p">)</span>
-<span class="c1">## Warning: Failed to connect to: ipv4 127.0.0.1:27017, error: 36, Operation now in progress</span>
-<span class="c1">## Error: Failed to connect to target host: localhost:27017</span>
 <span class="kt">c</span><span class="o">$</span>insert<span class="p">(</span>iris<span class="p">)</span>
-<span class="c1">## Error in c$insert: object of type &#39;builtin&#39; is not subsettable</span>
+<span class="c1">## </span>
+Complete<span class="o">!</span> Processed total of <span class="m">150</span> rows.
+<span class="c1">## [1] TRUE</span>
 </pre></div>
 
 
 <p>We get some nice feedback from the function, showing us that we inserted 150 rows (which is the total number of rows in the Iris data set). Let's start exploring the data with <code>mongolite</code>. You can easily get the total number of rows, as well as the unique values within the <code>Species</code> column/field: </p>
 <div class="highlight"><pre><span class="kt">c</span><span class="o">$</span>count<span class="p">()</span>
-<span class="c1">## Error in c$count: object of type &#39;builtin&#39; is not subsettable</span>
+<span class="c1">## [1] 150</span>
 <span class="kt">c</span><span class="o">$</span>distinct<span class="p">(</span><span class="s">&quot;Species&quot;</span><span class="p">)</span>
-<span class="c1">## Error in c$distinct: object of type &#39;builtin&#39; is not subsettable</span>
+<span class="c1">## [1] &quot;setosa&quot;     &quot;versicolor&quot; &quot;virginica&quot;</span>
 </pre></div>
 
 
@@ -113,7 +101,16 @@
 </pre></div>
 
 
-<div class="highlight"><pre><span class="cp">##</span><span class="c"> Error in c$aggregate: object of type &#39;builtin&#39; is not subsettable</span><span class="x"></span>
+<div class="highlight"><pre>## 
+ Found 3 records...
+ Imported 3 records. Simplifying into dataframe...
+</pre></div>
+
+
+<div class="highlight"><pre>##          _id count avgPetalLength
+## 1  virginica    50          5.552
+## 2 versicolor    50          4.260
+## 3     setosa    50          1.462
 </pre></div>
 
 
@@ -135,7 +132,9 @@
 
 <p>Similary, let's suppose we don't need all columns/fields for an analysis. For example, maybe we're only interesting in the sepal width for one particular analysis. Instead of loading all the data into memory, we can use <code>mongolite</code> to only return chosen fields:</p>
 <div class="highlight"><pre>sw <span class="o">=</span> <span class="kt">c</span><span class="o">$</span>find<span class="p">(</span><span class="s">&#39;{}&#39;</span><span class="p">,</span> <span class="s">&#39;{&quot;SepalWidth&quot;: 1, &quot;Species&quot;: 1, &quot;_id&quot;: 0}&#39;</span><span class="p">)</span>
-<span class="c1">## Error in c$find: object of type &#39;builtin&#39; is not subsettable</span>
+<span class="c1">## </span>
+ Found <span class="m">150</span> records...
+ Imported <span class="m">150</span> records. Simplifying into dataframe...
 </pre></div>
 
 
@@ -144,10 +143,7 @@
 </pre></div>
 
 
-<div class="highlight"><pre>## Error in ggplot(sw, aes(x = Species, y = SepalWidth)): object &#39;sw&#39; not found
-</pre></div>
-
-
+<p><img alt="plot of chunk sepalwidth_plot" src="../figure/mongolite/sepalwidth_plot-1.png" /> </p>
 <p>Of course, you can also update and remove entries in your database, as well as other functions. If you'd like to know more, have a look at the package on <a href="https://github.com/jeroenooms/mongolite">github</a> and <a href="http://cran.r-project.org/web/packages/mongolite/">CRAN</a>.</p>
   </div><!-- .content -->
 

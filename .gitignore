@@ -9,3 +9,4 @@ makethis.sh
 fabfile.*
 *.pid
 content/.ipynb_checkpoints/*
+__pycache__/

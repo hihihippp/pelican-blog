@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+      <title>Till Bergmann</title>
+      <link href='http://fonts.googleapis.com/css?family=Open+Sans:400italic,600italic,700italic,400,600,700' rel='stylesheet' type='text/css' />
+      <link href='http://fonts.googleapis.com/css?family=Merriweather:300' rel='stylesheet' type='text/css'/>
+      <link href='http://fonts.googleapis.com/css?family=Source+Code+Pro:200,400,700' rel='stylesheet' type='text/css'/>
+      <link rel="stylesheet" type="text/css" href="../theme/css/icons.css"/>
+      <link rel="stylesheet" type="text/css" href="../theme/css/styles.css"/>
+      <meta charset="utf-8" />
+  </head>
+
+  <body id="index">
+    <!-- header -->
+    <header class="siteheader">
+      <!-- site image -->
+
+      <div class = "sitebanner">
+        <h1><a class="sitetitle nodec" href="..">Till Bergmann</a></h1>
+        <h3 class ="sitesubtitle"></h3>
+        <!-- nav -->
+        <nav class="menu">
+          <ul>
+            <!-- menu items-->
+            <!--pages-->
+                <li><a class="nodec" href="../pages/about-me.html">About Me</a></li>
+                <li><a class="nodec" href="../pages/cv.html">CV</a></li>
+                <li><a class="nodec" href="../pages/projects.html">Projects</a></li>
+                <li><a class="nodec" href="../pages/resources.html">Resources</a></li>
+            <!-- services icons -->
+              <li><a class="nodec icon-mail-alt" href="mailto:tbergmann@ucmerced.edu"></a></li>
+              <li><a class="nodec icon-github" href="https://github.com/tillbe"></a></li>
+              <li><a class="nodec icon-twitter" href="http://twitter.com/till_be"></a></li>
+          </ul>
+        </nav>
+      </div> <!-- sitebanner -->
+    </header>
+
+    <!-- content -->
+
+<section class="content">
+
+  <h3 class="posttitle">
+    <a class="nodec" href="/articles/barplots-are-pies.html" rel="bookmark" title="Permalink to Bar plots are the new pie charts">
+      Bar plots are the new pie charts
+    </a>
+  </h3>
+
+  <div class="postinfo">
+    <p class="published" title="2015-05-19T00:00:00+02:00">
+      Tue 19 May 2015
+    </p>
+
+  </div><!-- .postinfo -->
+
+  <div class="article">
+    <p>A recent article titled <em>Beyond bar and line graphs: Time for a new data presentation paradigm</em> <a name=cite-Weissgerber_2015></a>(<a href="#bib-Weissgerber_2015">Weissgerber, Milic, Winham, and Garovic, 2015</a>) led me to explore some of the pitfalls of bar plots as opposed to other graphs such as box plots or dot plots. Bar plots are incredibly common in academic literature - in their analysis, the authors found that 85% of papers used at least one bar plot to display data. Why is that bad? Well, bar plots only show aggregated data: Usually the mean and either the standard deviation or standard error. There are (at least) three drawbacks of this:</p>
+<ul>
+<li>It doesn't provide more information than pure numbers. Visualizing a mean of 10.34 and a standard deviation of 0.56 does not provide you any more information than simply writing it down.</li>
+<li>Information is lost: Bar plots don't show any information about sample size or the distribution of data (more below).</li>
+<li>Bad data-ink ratio: A lot of ink is used to not display additional information.</li>
+</ul>
+<p>In this post, I want to recreate some of the points made in the paper, and show some hands-on R code to illustrate the disadvantages of bar plots (and summary statistics, for that matter). </p>
+<p>Let's load some necessary packages for our analysis...</p>
+<div class="highlight"><pre><span class="kn">library</span><span class="p">(</span>dplyr<span class="p">)</span>
+<span class="kn">library</span><span class="p">(</span>ggplot2<span class="p">)</span>
+</pre></div>
+
+
+<p>... and display some information about our sample data:</p>
+<div class="highlight"><pre><span class="kp">summary</span><span class="p">(</span>df<span class="p">)</span>
+</pre></div>
+
+
+<div class="highlight"><pre>##     group          rt       
+##  female:20   Min.   :14.69  
+##  male  :20   1st Qu.:20.51  
+##              Median :24.09  
+##              Mean   :23.87  
+##              3rd Qu.:26.42  
+##              Max.   :30.95
+</pre></div>
+
+
+<p>In this example, the test data consists of two variables: <code>rt</code> representing reaction times, and <code>group</code> representing gender (<code>male</code> or <code>gender</code>). Let's pretend that we're interested in the differences in reaction times between the two genders (for whatever reason; I'm incredibly uncreative). I included the code to generate the data at the bottom of the post, but for now, let's not look at it. The code actually reveals some of the points I'm going to make later on, so please be patient! (When you analyze your experimental data, you don't know the underlying process either!)</p>
+<p>To explore the data further, we can look at the mean and standard deviation of the reaction times in both groups:</p>
+<div class="highlight"><pre>agg <span class="o">=</span> df <span class="o">%&gt;%</span>
+    group_by<span class="p">(</span>group<span class="p">)</span> <span class="o">%&gt;%</span>
+    summarise<span class="p">(</span>mean <span class="o">=</span> <span class="kp">mean</span><span class="p">(</span>rt<span class="p">),</span> sd <span class="o">=</span> sd<span class="p">(</span>rt<span class="p">))</span>
+agg
+</pre></div>
+
+
+<div class="highlight"><pre>## Source: local data frame [2 x 3]
+## 
+##    group     mean       sd
+## 1 female 20.38384 2.625257
+## 2   male 27.36450 2.670447
+</pre></div>
+
+
+<p>From the aggregated data, we can see that the mean for males is higher than for females, but both have roughly the same standard deviation. This might lead us to the conclusion that males (for whatever reason) take longer to react to our experimental stimuli than females. In fact, if we run a simple <em>t</em>-test, we get a significant difference:</p>
+<div class="highlight"><pre><span class="kp">with</span><span class="p">(</span>df<span class="p">,</span> t.test<span class="p">(</span>rt<span class="o">~</span>group<span class="p">))</span>
+</pre></div>
+
+
+<div class="highlight"><pre>## 
+##  Welch Two Sample t-test
+## 
+## data:  rt by group
+## t = -8.3366, df = 37.989, p-value = 4.153e-10
+## alternative hypothesis: true difference in means is not equal to 0
+## 95 percent confidence interval:
+##  -8.675816 -5.285512
+## sample estimates:
+## mean in group female   mean in group male 
+##             20.38384             27.36450
+</pre></div>
+
+
+<p>However, is this enough for us to conclude that there actually is a difference between genders? Let's try and visualize the data to find out more about the reaction times and its distribution.</p>
+<p>As stated above, a common method is to use a bar plot:</p>
+<div class="highlight"><pre>ggplot<span class="p">(</span>agg<span class="p">,</span> aes<span class="p">(</span>y<span class="o">=</span><span class="kp">mean</span><span class="p">,</span> x<span class="o">=</span>group<span class="p">,</span> fill <span class="o">=</span> group<span class="p">))</span> <span class="o">+</span>
+  geom_bar<span class="p">(</span>stat <span class="o">=</span> <span class="s">&quot;identity&quot;</span><span class="p">,</span> position <span class="o">=</span> <span class="s">&quot;dodge&quot;</span><span class="p">)</span> <span class="o">+</span>
+  geom_errorbar<span class="p">(</span>aes<span class="p">(</span>ymax <span class="o">=</span> mean <span class="o">+</span> sd<span class="p">,</span> ymin <span class="o">=</span> mean <span class="o">-</span> sd <span class="p">),</span> width <span class="o">=</span> <span class="m">0.25</span><span class="p">)</span> <span class="o">+</span>
+  ggtitle<span class="p">(</span><span class="s">&quot;Common bar plot&quot;</span><span class="p">)</span>
+</pre></div>
+
+
+<p><img alt="plot of chunk barplot" src="../figure/barplots/barplot-1.png" /> </p>
+<p>Note that the plot doesn't give us more information than the aggregated data frame <code>agg</code>! In fact, one could argue that the raw numbers are more precise and informative than the bar plot. However, this is what we often find in the literature. A slightly different visual representation showing the same information is this plot:</p>
+<div class="highlight"><pre>ggplot<span class="p">(</span>agg<span class="p">,</span> aes<span class="p">(</span>y<span class="o">=</span><span class="kp">mean</span><span class="p">,</span> x<span class="o">=</span>group<span class="p">,</span> col <span class="o">=</span> group<span class="p">))</span> <span class="o">+</span>
+  geom_point<span class="p">(</span>size <span class="o">=</span> <span class="m">5</span><span class="p">)</span> <span class="o">+</span>
+  geom_errorbar<span class="p">(</span>aes<span class="p">(</span>ymax <span class="o">=</span> mean <span class="o">+</span> sd<span class="p">,</span> ymin <span class="o">=</span> mean <span class="o">-</span>sd <span class="p">),</span> 
+                width <span class="o">=</span> <span class="m">0.25</span><span class="p">)</span> <span class="o">+</span>
+  ylim<span class="p">(</span><span class="m">0</span><span class="p">,</span> <span class="m">32</span><span class="p">)</span>
+</pre></div>
+
+
+<p><img alt="plot of chunk meanplot" src="../figure/barplots/meanplot-1.png" /> </p>
+<p>The only advantage of this plot is a more economoc data-ink ratio, but it doesn't give us any more idea about the distribution of the data than the bar plot (they also look like the TIE fighers in Star Wars...). Box plots, on the other hand, provide more information about the underlying distribution, emphasizing interquartile ranges and the median (see <code>ggplot2</code>'s <a href="http://docs.ggplot2.org/0.9.3.1/geom_boxplot.html">man page</a> for more info):</p>
+<div class="highlight"><pre>ggplot<span class="p">(</span>df<span class="p">,</span> aes<span class="p">(</span>x <span class="o">=</span> group<span class="p">,</span> y <span class="o">=</span> rt<span class="p">,</span> col <span class="o">=</span>group<span class="p">))</span> <span class="o">+</span>
+  stat_boxplot<span class="p">(</span>geom <span class="o">=</span><span class="s">&#39;errorbar&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="c1"># adds whiskers to the lines</span>
+  geom_boxplot<span class="p">()</span> <span class="o">+</span>
+  ggtitle<span class="p">(</span><span class="s">&quot;Boxplot&quot;</span><span class="p">)</span>
+</pre></div>
+
+
+<p><img alt="plot of chunk boxplot" src="../figure/barplots/boxplot-1.png" /> </p>
+<p>What information does the box plot add? Well, we can see that for females, we get values as low as below 15, and as high as above 25. Most of the datapoints seem to be between 19 and 23. For males, the data seems to be tighter, between 24 and 32 (despited the same standard variation!?)<br />
+While the box plot is a definitive improvement over the two previous plots, it still doesn't show us the whole distribution: What exactly is going on between the first and third quantile? How many data points are between 15 and 19 (the bottom whisker for females)?<br />
+How can we visualize all this information? Univariate dot plots! Simply plot all the data points individually, and jitter them around a little to avoid overlap:</p>
+<div class="highlight"><pre>gp <span class="o">=</span> ggplot<span class="p">(</span>df<span class="p">,</span> aes<span class="p">(</span>x <span class="o">=</span> group<span class="p">,</span> y <span class="o">=</span> rt<span class="p">,</span> col <span class="o">=</span> group<span class="p">))</span> <span class="o">+</span> 
+     geom_point<span class="p">(</span>size <span class="o">=</span> <span class="m">3</span><span class="p">,</span> 
+                position <span class="o">=</span> position_jitter<span class="p">(</span>width <span class="o">=</span> <span class="m">.25</span><span class="p">))</span> 
+gp <span class="o">+</span> ggtitle<span class="p">(</span><span class="s">&quot;Univariate Dotplot&quot;</span><span class="p">)</span>
+</pre></div>
+
+
+<p><img alt="plot of chunk dotplot" src="../figure/barplots/dotplot-1.png" /> </p>
+<p>Woah. The distribution for males is bimodal! Probably not a huge surprise if you looked at how we generated the data (you didn't peek, did you?), but not possible to see on any of the previous plots or the summary statistics. Why do we care that the data is bimodal? Maybe it's just fluke, and there is no deeper reason behind it. Maybe there is a latent variable that influences reaction times more than gender - maybe age, or exposure to whatever you're testing. Maybe participants in one group got distracted at some point, delaying their reaction time; or the computer didn't record the data properly. All of these (and more!) could be valid reasons, and need to be considered.</p>
+<p>The dot plot additionally shows the distribution of the individual points (to check for outliers) and the sample size.  In this case, the sample size of the two groups is the same, but it could very well be different. </p>
+<p>If needed, you can also add measures of central tendencies such as the mean yourself. This makes it even more apparent that the female distribution is bimodal:</p>
+<div class="highlight"><pre>gp <span class="o">+</span> geom_errorbar<span class="p">(</span>stat <span class="o">=</span> <span class="s">&quot;hline&quot;</span><span class="p">,</span> yintercept <span class="o">=</span> <span class="s">&quot;mean&quot;</span><span class="p">,</span>
+                   aes<span class="p">(</span>ymax<span class="o">=</span><span class="m">..</span>y..<span class="p">,</span>ymin<span class="o">=</span><span class="m">..</span>y..<span class="p">),</span>
+                   width <span class="o">=</span> <span class="m">0.5</span><span class="p">,</span> col <span class="o">=</span> <span class="s">&quot;black&quot;</span><span class="p">)</span> <span class="o">+</span>
+    ggtitle<span class="p">(</span><span class="s">&quot;Dot plot with mean&quot;</span><span class="p">)</span>
+</pre></div>
+
+
+<p><img alt="plot of chunk dotplot2" src="../figure/barplots/dotplot2-1.png" /> </p>
+<p>That's it! I hope I could show why relying on summary statistics and statistical tests isn't always enough. Even visualizing the data with inadequate graphs such as bar plots is not sufficient. Both box plots and especially univariate dot plots can tell you more about the underlying distribution of your data, and might reveal some properties that have to taken into account. As a final note, there are of course other ways to test for bimodality, such as histograms. Univariate dot plots, however, are more versatile: Check the original paper for more examples, if you're interested!</p>
+<h3>Alternative: Cleveland Dot Plot</h3>
+<p>Another way to plot distributions nicely is the Cleveland dot plot, which is very similar to the univariate dot plot describe above - but the axes are flipped and the <code>rt</code> values are plotted against the observation index (see <a name=cite-Zuur_2009></a><a href="#bib-Zuur_2009">Zuur, Ieno, and Elphick (2009)</a>). Here, values that are either far right or left are considered outliers. The bimodal distribution is clearly visible.<br />
+Plotting against the observation index can be helpful in analyzing why the distribution is bimodal. In these data, reaction times for females are higher for later observations - maybe there is a reason for that? </p>
+<div class="highlight"><pre>ggplot<span class="p">(</span>df<span class="p">,</span> aes<span class="p">(</span>x <span class="o">=</span> rt<span class="p">,</span> y <span class="o">=</span> <span class="m">1</span><span class="o">:</span><span class="kp">length</span><span class="p">(</span>rt<span class="p">),</span> col <span class="o">=</span> group<span class="p">))</span> <span class="o">+</span> 
+  geom_point<span class="p">(</span>size <span class="o">=</span> <span class="m">3</span><span class="p">)</span> <span class="o">+</span>
+  ggtitle<span class="p">(</span><span class="s">&quot;Cleveland Dot Plot&quot;</span><span class="p">)</span> <span class="o">+</span>
+  facet_grid<span class="p">(</span><span class="o">~</span>group<span class="p">)</span> <span class="o">+</span>
+  ylab<span class="p">(</span><span class="s">&quot;Observation&quot;</span><span class="p">)</span>
+</pre></div>
+
+
+<p><img alt="plot of chunk cleveland" src="../figure/barplots/cleveland-1.png" /> </p>
+<h3>Further Reading:</h3>
+<p><a name=bib-Weissgerber_2015></a><a href="#cite-Weissgerber_2015">[1]</a> T.
+L. Weissgerber, N. M. Milic, S. J. Winham and V. D. Garovic.
+"Beyond Bar and Line Graphs: Time for a New Data Presentation
+Paradigm". In: <em>PLoS Biol</em> 13.4 (Apr. 2015), p. e1002128. DOI:
+<a href="http://dx.doi.org/10.1371/journal.pbio.1002128">10.1371/journal.pbio.1002128</a>.
+URL:
+<a href="http://dx.doi.org/10.1371/journal.pbio.1002128">http://dx.doi.org/10.1371/journal.pbio.1002128</a>.</p>
+<p><a name=bib-Zuur_2009></a><a href="#cite-Zuur_2009">[2]</a> A. F. Zuur, E. N.
+Ieno and C. S. Elphick. "A protocol for data exploration to avoid
+common statistical problems". In: <em>Methods in Ecology and
+Evolution</em> 1.1 (Nov. 2009), pp. 3-14. DOI:
+<a href="http://dx.doi.org/10.1111/j.2041-210x.2009.00001.x">10.1111/j.2041-210x.2009.00001.x</a>.
+URL:
+<a href="http://dx.doi.org/10.1111/j.2041-210X.2009.00001.x">http://dx.doi.org/10.1111/j.2041-210X.2009.00001.x</a>.</p>
+<hr />
+<h3>Data generatation</h3>
+<p>Here is how I generated the data:</p>
+<div class="highlight"><pre><span class="kn">library</span><span class="p">(</span>tidyr<span class="p">)</span>
+<span class="kp">set.seed</span><span class="p">(</span><span class="m">42</span><span class="p">)</span>
+df <span class="o">=</span> <span class="kt">data.frame</span><span class="p">(</span>female <span class="o">=</span>   rnorm<span class="p">(</span><span class="m">20</span><span class="p">,</span> mean <span class="o">=</span> <span class="m">20</span><span class="p">,</span> sd <span class="o">=</span> <span class="m">2.0</span><span class="p">),</span> 
+                male   <span class="o">=</span> <span class="kt">c</span><span class="p">(</span>rnorm<span class="p">(</span><span class="m">10</span><span class="p">,</span> mean <span class="o">=</span> <span class="m">30</span><span class="p">,</span> sd <span class="o">=</span> <span class="m">0.5</span><span class="p">),</span> 
+                           rnorm<span class="p">(</span><span class="m">10</span><span class="p">,</span> mean <span class="o">=</span> <span class="m">25</span><span class="p">,</span> sd <span class="o">=</span> <span class="m">0.5</span><span class="p">)))</span>
+df <span class="o">=</span> gather<span class="p">(</span>df<span class="p">,</span> group<span class="p">,</span> rt<span class="p">)</span>
+</pre></div>
+  </div><!-- .content -->
+
+</section>
+
+
+    <!-- footer -->
+    <footer>
+      <p>
+        © Till Bergmann.
+        Generated by <a href= "http://docs.getpelican.com/">Pelican</a> with
+        <a href="http://github.com/porterjamesj/crowsfoot">crowsfoot</a> theme.
+      </p>
+    </footer>
+  </body>
+</html>

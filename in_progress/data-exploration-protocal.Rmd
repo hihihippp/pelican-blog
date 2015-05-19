@@ -1,0 +1,66 @@
+Title: A protocal for data exploration
+Date: 2015-05-19
+Tags: R, data exploration, outlier, normality 
+Slug: data-exploration-protocal
+
+```{r, echo = FALSE}
+library(knitr)
+library(ggplot2)
+library(knitcitations)
+theme_update(plot.background = element_rect(fill = "transparent", colour = NA))
+
+opts_chunk$set(dev.args=list(bg="transparent"))
+```
+`r citet("10.1111/j.2041-210X.2009.00001.x")`
+HERE COMES THE TEXT
+
+## Step 1: Outliers
+
+Outliers affect certain methos (e.g. linear regression). The authors recommend boxplots or Cleveland dotplots to detect outliers. I've written about visualizing outliers and distributions here. While boxplots are okay I prefer univariate dot-plots which are similar to Cleveland dotplots.
+
+```{r, echo=FALSE, fig.width=12}
+source("~/Documents/Programming/R-Scripts/multiplot.R")
+#Change this line to where ever you saved the data files.
+setwd("~/Downloads/ZuueIenoElphickDataExplorationMEE/")
+
+#Figure 2
+Sparrows <- read.table(file = "SparrowsElphick.txt", header = TRUE)
+Sparrows$ID = 1:nrow(Sparrows)
+library(ggplot2)
+bp = ggplot(Sparrows, aes(y = wingcrd, x=1)) + 
+  geom_boxplot() +
+  xlab("") +
+  scale_x_continuous(breaks=NULL) +
+  ggtitle("Boxplot")
+
+cleve = ggplot(Sparrows, aes(y = ID, x=wingcrd)) + 
+  geom_point(aes(y=ID)) +
+  ggtitle("Cleveland Dot Plot")
+
+dot = ggplot(Sparrows, aes(y=wingcrd, x = 1)) + 
+  geom_jitter(position = position_jitter(w = 0.3)) +
+    xlab("") +
+  scale_x_continuous(breaks=NULL, limits = c(.7,1.3)) +
+  ggtitle("Univariate Dot Plot")
+multiplot(bp, cleve, dot, cols =3)
+```
+
+If you detect outliers, investigate to why they exist. Maybe measurement error. The authors recommending simulating repeated samples from the same distribution you assume your data is from, e.g. the normal distribution, and then comparing the simulated distributions to your data.
+
+## Homogeneity of variance
+
+Check if data have roughly the same variance for models where that is an assumption (like regression), either with distribution plots or residuals. Probably do both to verify.
+
+## Normality of data
+
+Are observations or residuals normally distributed? Check what the assumptions are. Plot histogram and/or Q-Q Plot. (more in anscombe blog post)
+```{r, echo=FALSE, results='hide', warning=FALSE}
+df = data.frame(x=rnorm(1000, mean = 20, sd =2), id = 1:1000)
+norm1 = ggplot(df, aes(x=x)) + geom_histogram(binwidth = 0.5) + ggtitle("Histogram")
+norm2 = ggplot(df, aes(sample = x)) + stat_qq() + ggtitle("Q-Q Plot")
+multiplot(norm1, norm2, cols =2)
+```
+
+## Lot's of zeroes?
+
+

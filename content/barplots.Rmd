@@ -111,7 +111,7 @@ gp + geom_errorbar(stat = "hline", yintercept = "mean",
     ggtitle("Dot plot with mean")
 ```
 
-That's it! I hope I could show why relying on summary statistics and statistical tests isn't always enough. Even visualizing the data with inadequate graphs such as bar plots is not sufficient. Both box plots and especially univariate dot plots can tell you more about the underlying distribution of your data, and might reveal some properties that have to taken into account. As a final note, there are of course other ways to check for bimodality, such as histograms. Univariate dot plots, however, are more versatile: Check the original paper for more [examples](http://dx.doi.org/10.1371/journal.pbio.1002128.g001), if you're interested!
+That's it! I hope I could show why relying on summary statistics and statistical tests isn't always enough. Even visualizing the data with inadequate graphs such as bar plots is not sufficient. Both box plots and especially univariate dot plots can tell you more about the underlying distribution of your data, and might reveal some properties that have to be taken into account. As a final note, there are of course other ways to check for bimodality, such as histograms. Univariate dot plots, however, are more versatile: Check the original paper for more [examples](http://dx.doi.org/10.1371/journal.pbio.1002128.g001), if you're interested!
 
 ### Alternative: Cleveland Dot Plot
 

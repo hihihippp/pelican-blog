@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+      <title>Paranormal Distributions</title>
+      <link href='http://fonts.googleapis.com/css?family=Open+Sans:400italic,600italic,700italic,400,600,700' rel='stylesheet' type='text/css' />
+      <link href='http://fonts.googleapis.com/css?family=Merriweather:300' rel='stylesheet' type='text/css'/>
+      <link href='http://fonts.googleapis.com/css?family=Source+Code+Pro:200,400,700' rel='stylesheet' type='text/css'/>
+      <link rel="stylesheet" type="text/css" href="../theme/css/icons.css"/>
+      <link rel="stylesheet" type="text/css" href="../theme/css/styles.css"/>
+      <meta charset="utf-8" />
+  </head>
+
+  <body id="index">
+    <!-- header -->
+    <header class="siteheader">
+      <!-- site image -->
+
+      <div class = "sitebanner">
+        <h1><a class="sitetitle nodec" href="..">Paranormal Distributions</a></h1>
+        <h3 class ="sitesubtitle">a blog on data stuff by Till Bergmann</h3>
+        <!-- nav -->
+        <nav class="menu">
+          <ul>
+            <!-- menu items-->
+            <!--pages-->
+                <li><a class="nodec" href="../pages/about-me.html">About Me</a></li>
+                <li><a class="nodec" href="../pages/cv.html">CV</a></li>
+                <li><a class="nodec" href="../pages/projects.html">Projects</a></li>
+                <li><a class="nodec" href="../pages/resources.html">Resources</a></li>
+            <!-- services icons -->
+              <li><a class="nodec icon-mail-alt" href="mailto:tbergmann@ucmerced.edu"></a></li>
+              <li><a class="nodec icon-github" href="https://github.com/tillbe"></a></li>
+              <li><a class="nodec icon-twitter" href="http://twitter.com/till_be"></a></li>
+          </ul>
+        </nav>
+      </div> <!-- sitebanner -->
+    </header>
+
+    <!-- content -->
+
+<section class="content">
+
+  <h3 class="posttitle">
+    <a class="nodec" href="/drafts/visualization-diagnostics.html" rel="bookmark" title="Permalink to Why visualizing data matters">
+      Why visualizing data matters
+    </a>
+  </h3>
+
+  <div class="postinfo">
+    <p class="published" title="2015-05-18T00:00:00+02:00">
+      Mon 18 May 2015
+    </p>
+
+  </div><!-- .postinfo -->
+
+  <div class="article">
+    <div class="highlight"><pre><span class="kn">library</span><span class="p">(</span>dplyr<span class="p">)</span>
+<span class="kn">library</span><span class="p">(</span>tidyr<span class="p">)</span>
+<span class="kn">library</span><span class="p">(</span>ggplot2<span class="p">)</span>
+<span class="kn">library</span><span class="p">(</span>broom<span class="p">)</span>
+</pre></div>
+
+
+<p>Visualizing data matters: Bla bla</p>
+<p><a href="https://www.nosm.ca/uploadedFiles/Research/Northern_Health_Research_Conference/Past_Conferences/2008/WEAVER%20Bruce.pdf">read this</a></p>
+<div class="highlight"><pre><span class="kp">head</span><span class="p">(</span>df<span class="p">)</span>
+</pre></div>
+
+
+<div class="highlight"><pre>##   observation set  x    y
+## 1           1   I 10 8.04
+## 2           1  II 10 9.14
+## 3           1 III 10 7.46
+## 4           1  IV  8 6.58
+## 5           2   I  8 6.95
+## 6           2  II  8 8.14
+</pre></div>
+
+
+<div class="highlight"><pre>agg <span class="o">=</span> df <span class="o">%&gt;%</span>
+  group_by<span class="p">(</span>set<span class="p">)</span> <span class="o">%&gt;%</span>
+  summarise<span class="p">(</span>x_mean <span class="o">=</span> <span class="kp">mean</span><span class="p">(</span>x<span class="p">),</span> x_sd <span class="o">=</span> sd<span class="p">(</span>x<span class="p">),</span> y_mean <span class="o">=</span> <span class="kp">mean</span><span class="p">(</span>y<span class="p">),</span> y_sd <span class="o">=</span> sd<span class="p">(</span>y<span class="p">))</span>
+agg
+</pre></div>
+
+
+<div class="highlight"><pre>## Source: local data frame [4 x 5]
+## 
+##   set x_mean     x_sd   y_mean     y_sd
+## 1   I      9 3.316625 7.500909 2.031568
+## 2  II      9 3.316625 7.500909 2.031657
+## 3 III      9 3.316625 7.500000 2.030424
+## 4  IV      9 3.316625 7.500909 2.030579
+</pre></div>
+
+
+<p>Might conclude it's the same data. </p>
+<div class="highlight"><pre>lr <span class="o">=</span> df <span class="o">%&gt;%</span>
+  group_by<span class="p">(</span>set<span class="p">)</span> <span class="o">%&gt;%</span> 
+  do<span class="p">(</span>mod <span class="o">=</span> lm<span class="p">(</span>y <span class="o">~</span> x<span class="p">,</span> data <span class="o">=</span> <span class="m">.</span><span class="p">))</span> <span class="o">%&gt;%</span>
+  mutate<span class="p">(</span>intercept <span class="o">=</span> <span class="kp">summary</span><span class="p">(</span>mod<span class="p">)</span><span class="o">$</span>coeff<span class="p">[</span><span class="m">1</span><span class="p">],</span> slope <span class="o">=</span> <span class="kp">summary</span><span class="p">(</span>mod<span class="p">)</span><span class="o">$</span>coeff<span class="p">[</span><span class="m">2</span><span class="p">])</span> <span class="o">%&gt;%</span>
+  glance<span class="p">(</span>mod<span class="p">)</span> <span class="o">%&gt;%</span>
+  select<span class="p">(</span>set<span class="p">,</span> intercept<span class="p">,</span> slope<span class="p">,</span> adj.r.squared<span class="p">,</span> AIC<span class="p">)</span>
+lr
+</pre></div>
+
+
+<div class="highlight"><pre>## Source: local data frame [4 x 5]
+## Groups: set, intercept, slope
+## 
+##   set intercept     slope adj.r.squared      AIC
+## 1   I  3.000091 0.5000909     0.6294916 39.68137
+## 2  II  3.000909 0.5000000     0.6291578 39.69224
+## 3 III  3.002455 0.4997273     0.6292489 39.67618
+## 4  IV  3.001727 0.4999091     0.6296747 39.66522
+</pre></div>
+
+
+<h3>Diagnostics</h3>
+<div class="highlight"><pre>diag <span class="o">=</span> df <span class="o">%&gt;%</span>
+  group_by<span class="p">(</span>set<span class="p">)</span> <span class="o">%&gt;%</span>
+  do<span class="p">(</span>mod <span class="o">=</span> lm<span class="p">(</span>y <span class="o">~</span> x<span class="p">,</span> data <span class="o">=</span> <span class="m">.</span><span class="p">))</span> <span class="o">%&gt;%</span>
+  augment<span class="p">(</span><span class="m">.</span><span class="p">,</span> mod<span class="p">)</span> <span class="o">%&gt;%</span>
+  select<span class="p">(</span>set<span class="p">,</span> x<span class="p">,</span> <span class="m">.</span>resid<span class="p">,</span> <span class="m">.</span>hat<span class="p">,</span> <span class="m">.</span>cooksd<span class="p">)</span> 
+<span class="kp">head</span><span class="p">(</span><span class="kp">diag</span><span class="p">)</span>
+</pre></div>
+
+
+<div class="highlight"><pre>## Source: local data frame [6 x 5]
+## Groups: set
+## 
+##   set  x      .resid       .hat      .cooksd
+## 1   I 10  0.03900000 0.10000000 6.139788e-05
+## 2   I  8 -0.05081818 0.10000000 1.042467e-04
+## 3   I 13 -1.92127273 0.23636364 4.892093e-01
+## 4   I  9  1.30909091 0.09090909 6.163700e-02
+## 5   I 11 -0.17109091 0.12727273 1.599342e-03
+## 6   I 14 -0.04136364 0.31818182 3.828995e-04
+</pre></div>
+
+
+<div class="highlight"><pre>means <span class="o">=</span> diag <span class="o">%&gt;%</span> group_by<span class="p">(</span>set<span class="p">)</span> <span class="o">%&gt;%</span> summarise<span class="p">(</span>mhat <span class="o">=</span> <span class="kp">mean</span><span class="p">(</span><span class="m">.</span>hat<span class="p">,</span> na.rm<span class="o">=</span><span class="kc">TRUE</span><span class="p">),</span> mcooksd <span class="o">=</span> <span class="kp">mean</span><span class="p">(</span><span class="m">.</span>cooksd<span class="p">,</span> na.rm <span class="o">=</span> <span class="kc">TRUE</span><span class="p">))</span>
+diag <span class="o">=</span> <span class="kp">merge</span><span class="p">(</span><span class="kp">diag</span><span class="p">,</span> means<span class="p">)</span>
+</pre></div>
+
+
+<div class="highlight"><pre>ggplot<span class="p">(</span><span class="kp">diag</span><span class="p">,</span> aes<span class="p">(</span>x<span class="o">=</span>x<span class="p">,</span> y<span class="o">=</span><span class="m">.</span>resid<span class="p">))</span> <span class="o">+</span>
+  geom_point<span class="p">()</span> <span class="o">+</span>
+  facet_grid<span class="p">(</span><span class="o">~</span>set<span class="p">)</span> <span class="o">+</span> 
+  geom_hline<span class="p">(</span>aes<span class="p">(</span>yintercept <span class="o">=</span> <span class="m">0</span><span class="p">))</span> <span class="o">+</span>
+  ylim<span class="p">(</span><span class="m">-3.5</span><span class="p">,</span><span class="m">3.5</span><span class="p">)</span> <span class="o">+</span>
+  ggtitle<span class="p">(</span><span class="s">&quot;Residual plot of all sets&quot;</span><span class="p">)</span>
+</pre></div>
+
+
+<p><img alt="plot of chunk resplot" src="../figure/anscombe/resplot-1.png" /> 
+Hat values measure leverage, more than twice the average are noteworthy.</p>
+<div class="highlight"><pre>ggplot<span class="p">(</span><span class="kp">diag</span><span class="p">,</span> aes<span class="p">(</span>x<span class="o">=</span>x<span class="p">,</span> y<span class="o">=</span><span class="m">.</span>hat<span class="p">))</span> <span class="o">+</span>
+  geom_point<span class="p">()</span> <span class="o">+</span>
+  facet_grid<span class="p">(</span><span class="o">~</span>set<span class="p">)</span> <span class="o">+</span> 
+  ggtitle<span class="p">(</span><span class="s">&quot;Hat plot of all sets&quot;</span><span class="p">)</span> <span class="o">+</span>
+  geom_line<span class="p">(</span>aes<span class="p">(</span>y<span class="o">=</span>mhat<span class="o">*</span><span class="m">2</span><span class="p">),</span> col <span class="o">=</span><span class="s">&quot;red&quot;</span><span class="p">)</span>
+</pre></div>
+
+
+<p><img alt="plot of chunk hatplot" src="../figure/anscombe/hatplot-1.png" /> 
+Values over 1, or over <span class="math">\(4/n\)</span>, measures influence</p>
+<div class="highlight"><pre>ggplot<span class="p">(</span><span class="kp">diag</span><span class="p">,</span> aes<span class="p">(</span>x<span class="o">=</span>x<span class="p">,</span> y<span class="o">=</span><span class="m">.</span>cooksd<span class="p">))</span> <span class="o">+</span>
+  geom_point<span class="p">()</span> <span class="o">+</span>
+  facet_grid<span class="p">(</span><span class="o">~</span>set<span class="p">)</span> <span class="o">+</span> 
+  ggtitle<span class="p">(</span><span class="s">&quot;Cook&#39;s d plot of all sets&quot;</span><span class="p">)</span> <span class="o">+</span>
+  geom_line<span class="p">(</span>aes<span class="p">(</span>y<span class="o">=</span><span class="m">1</span><span class="p">))</span>
+</pre></div>
+
+
+<div class="highlight"><pre>## Warning in loop_apply(n, do.ply): Removed 1 rows containing missing values
+## (geom_point).
+</pre></div>
+
+
+<p><img alt="plot of chunk cookplots" src="../figure/anscombe/cookplots-1.png" /> </p>
+<div class="highlight"><pre>ggplot<span class="p">(</span>df<span class="p">,</span> aes<span class="p">(</span>x<span class="o">=</span>x<span class="p">,</span> y<span class="o">=</span>y<span class="p">))</span> <span class="o">+</span> 
+  geom_point<span class="p">()</span> <span class="o">+</span> 
+  geom_smooth<span class="p">(</span>method <span class="o">=</span> <span class="s">&quot;lm&quot;</span><span class="p">,</span> se <span class="o">=</span> <span class="kc">FALSE</span><span class="p">)</span> <span class="o">+</span>
+  facet_grid<span class="p">(</span><span class="o">~</span>set<span class="p">)</span>
+</pre></div>
+
+
+<p><img alt="plot of chunk plots" src="../figure/anscombe/plots-1.png" /> </p>
+<h3>Second Set</h3>
+<div class="highlight"><pre>set <span class="o">=</span> filter<span class="p">(</span>df<span class="p">,</span> set <span class="o">==</span> <span class="s">&quot;II&quot;</span><span class="p">)</span>
+ggplot<span class="p">(</span>set<span class="p">,</span> aes<span class="p">(</span>x<span class="o">=</span>x<span class="p">,</span> y<span class="o">=</span>y<span class="p">))</span> <span class="o">+</span> 
+  geom_point<span class="p">()</span> <span class="o">+</span>
+  geom_smooth<span class="p">(</span>method <span class="o">=</span> <span class="s">&quot;lm&quot;</span><span class="p">,</span> formula <span class="o">=</span> y <span class="o">~</span> poly<span class="p">(</span>x<span class="p">,</span><span class="m">2</span><span class="p">))</span>
+</pre></div>
+
+
+<p><img alt="plot of chunk 2set" src="../figure/anscombe/2set-1.png" /> </p>
+<div class="highlight"><pre>set <span class="o">=</span> filter<span class="p">(</span>df<span class="p">,</span> set <span class="o">==</span> <span class="s">&quot;III&quot;</span><span class="p">)</span>
+ggplot<span class="p">(</span>set<span class="p">,</span> aes<span class="p">(</span>x<span class="o">=</span>x<span class="p">,</span> y<span class="o">=</span>y<span class="p">))</span> <span class="o">+</span> 
+  geom_point<span class="p">()</span> <span class="o">+</span>
+  geom_smooth<span class="p">(</span>method <span class="o">=</span> <span class="s">&quot;lm&quot;</span><span class="p">,</span> se <span class="o">=</span> <span class="kc">FALSE</span><span class="p">)</span> <span class="o">+</span>
+  geom_smooth<span class="p">(</span>data <span class="o">=</span> filter<span class="p">(</span>set<span class="p">,</span> observation <span class="o">!=</span> <span class="m">3</span><span class="p">),</span> method <span class="o">=</span> <span class="s">&quot;lm&quot;</span><span class="p">,</span> col <span class="o">=</span><span class="s">&quot;red&quot;</span><span class="p">)</span>
+</pre></div>
+
+
+<p><img alt="plot of chunk 3set" src="../figure/anscombe/3set-1.png" /> </p>
+<div class="highlight"><pre>set <span class="o">=</span> filter<span class="p">(</span>df<span class="p">,</span> set <span class="o">==</span> <span class="s">&quot;IV&quot;</span><span class="p">)</span>
+point <span class="o">=</span> <span class="kt">data.frame</span><span class="p">(</span>observation <span class="o">=</span> <span class="m">12</span><span class="p">,</span> set <span class="o">=</span> <span class="s">&quot;IV&quot;</span><span class="p">,</span> x <span class="o">=</span> <span class="m">19</span><span class="p">,</span> y <span class="o">=</span> <span class="m">3</span><span class="p">)</span>
+set <span class="o">=</span> <span class="kp">rbind</span><span class="p">(</span>set<span class="p">,</span> point<span class="p">)</span>
+ggplot<span class="p">(</span>set<span class="p">,</span> aes<span class="p">(</span>x<span class="o">=</span>x<span class="p">,</span> y<span class="o">=</span>y<span class="p">))</span> <span class="o">+</span> 
+  geom_point<span class="p">()</span> <span class="o">+</span>
+  geom_smooth<span class="p">(</span>data <span class="o">=</span> filter<span class="p">(</span>set<span class="p">,</span> observation <span class="o">!=</span> <span class="m">12</span><span class="p">),</span>method <span class="o">=</span> <span class="s">&quot;lm&quot;</span><span class="p">,</span> se <span class="o">=</span> <span class="kc">FALSE</span><span class="p">)</span> <span class="o">+</span>
+  geom_smooth<span class="p">(</span>data <span class="o">=</span> filter<span class="p">(</span>set<span class="p">,</span> observation <span class="o">!=</span> <span class="m">8</span><span class="p">),</span> method <span class="o">=</span> <span class="s">&quot;lm&quot;</span><span class="p">,</span> col <span class="o">=</span><span class="s">&quot;red&quot;</span><span class="p">,</span> se <span class="o">=</span> <span class="kc">FALSE</span><span class="p">)</span>
+</pre></div>
+
+
+<p><img alt="plot of chunk 4set" src="../figure/anscombe/4set-1.png" /> </p>
+<script type="text/javascript">if (!document.getElementById('mathjaxscript_pelican_#%@#$@#')) {
+    var align = "center",
+        indent = "0em",
+        linebreak = "false";
+
+    if (false) {
+        align = (screen.width < 768) ? "left" : align;
+        indent = (screen.width < 768) ? "0em" : indent;
+        linebreak = (screen.width < 768) ? 'true' : linebreak;
+    }
+    
+    var mathjaxscript = document.createElement('script');
+    mathjaxscript.id = 'mathjaxscript_pelican_#%@#$@#';
+    mathjaxscript.type = 'text/javascript';
+    mathjaxscript.src = '//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML';
+    mathjaxscript[(window.opera ? "innerHTML" : "text")] =
+        "MathJax.Hub.Config({" +
+        "    config: ['MMLorHTML.js']," +
+        "    TeX: { extensions: ['AMSmath.js','AMSsymbols.js','noErrors.js','noUndefined.js'], equationNumbers: { autoNumber: 'AMS' } }," +
+        "    jax: ['input/TeX','input/MathML','output/HTML-CSS']," +
+        "    extensions: ['tex2jax.js','mml2jax.js','MathMenu.js','MathZoom.js']," +
+        "    displayAlign: '"+ align +"'," +
+        "    displayIndent: '"+ indent +"'," +
+        "    showMathMenu: true," +
+        "    tex2jax: { " +
+        "        inlineMath: [ ['\\\\(','\\\\)'] ], " +
+        "        displayMath: [ ['$$','$$'] ]," +
+        "        processEscapes: true," +
+        "        preview: 'TeX'," +
+        "    }, " +
+        "    'HTML-CSS': { " +
+        "        styles: { '.MathJax_Display, .MathJax .mo, .MathJax .mi, .MathJax .mn': {color: 'inherit ! important'} }," +
+        "        linebreaks: { automatic: "+ linebreak +", width: '90% container' }," +
+        "    }, " +
+        "}); ";
+    (document.body || document.getElementsByTagName('head')[0]).appendChild(mathjaxscript);
+}
+</script>
+  </div><!-- .content -->
+
+</section>
+
+
+    <!-- footer -->
+    <footer>
+      <p>
+        © Till Bergmann.
+        Generated by <a href= "http://docs.getpelican.com/">Pelican</a> with
+        <a href="http://github.com/porterjamesj/crowsfoot">crowsfoot</a> theme.
+      </p>
+    </footer>
+  </body>
+</html>

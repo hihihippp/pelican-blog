@@ -3,7 +3,8 @@
 from __future__ import unicode_literals
 
 AUTHOR = u'Till Bergmann'
-SITENAME = u"Till Bergmann"
+SITESUBTITLE = u"a blog on data stuff by Till Bergmann"
+SITENAME = u"Paranormal Distributions"
 SITEURL = 'http://www.tillbergmann.com/blog'
 
 PATH = 'content'
@@ -50,8 +51,7 @@ PLUGIN_PATHS = ['pelican-plugins']
 
 PLUGINS = [	'pelican-knitr',
             "render_math", 
-            'liquid_tags.notebook',
-            'pelican-bibtex']
+            'liquid_tags.notebook']
 
 STATIC_PATHS = ['pages','images', 'figure']
 

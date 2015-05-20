@@ -1,6 +1,6 @@
 Title: Resources
 
-This is just a list of resources that I have either used in the past or looking into using in the future. 
+This is just a list of resources that I have either used in the past or looking into using in the future. It mainly serves as a bookmark page for myself, but maybe some others will find it helpful.
 
 ## Books 
 
@@ -31,7 +31,7 @@ This is just a list of resources that I have either used in the past or looking 
 * [CS 124: From Languages to Information](http://web.stanford.edu/class/cs124/)
 * [Working With Text](http://www.thoughtly.co/blog/working-with-text/)
 * [NLP and Probability](http://www.thoughtly.co/blog/probability/)
-* [More Naive Bayes)(http://blog.datumbox.com/machine-learning-tutorial-the-naive-bayes-text-classifier/)
+* [More Naive Bayes](http://blog.datumbox.com/machine-learning-tutorial-the-naive-bayes-text-classifier/)
 * [Text classification with labels](http://www.r-bloggers.com/generating-labels-for-supervised-text-classification-using-cat-and-r/)
 * [NLP class](http://www.mohamedaly.info/teaching/cmp462-spring-2014-natural-language-processing)
 
@@ -41,11 +41,11 @@ This is just a list of resources that I have either used in the past or looking 
 ## Dimensionality reduction
 * [PCA visually explained](http://setosa.io/ev/principal-component-analysis/)
 
-## Interview Prep
+<!-- ## Interview Prep
 * [job interview questions for data scientists](http://www.datasciencecentral.com/profiles/blogs/66-job-interview-questions-for-data-scientists?goback=.gde_35222_member_213964505)
 * [DS Interview Questions](http://www.galvanize.it/blog/how-to-nail-a-data-science-interview?utm_content=buffere23c6&utm_medium=social&utm_source=twitter.com&utm_campaign=buffer)
 * [DS Reddit](http://www.reddit.com/r/datascience/comments/2m2vst/data_science_interview_online/)
-
+ -->
 ## Other methods and snippets
 * [Gradient Descent](http://spin.atomicobject.com/2014/06/24/gradient-descent-linear-regression/)
 * [Tips and Tricks for Encoding Categorical Features in Classification Tasks](http://nbviewer.ipython.org/github/rasbt/pattern_classification/blob/master/preprocessing/feature_encoding.ipynb)
@@ -68,11 +68,12 @@ This is just a list of resources that I have either used in the past or looking 
 * Linear Algebra [Khan Academy](https://www.khanacademy.org/math/linear-algebra/)
 * [Information Theory Khan](https://www.khanacademy.org/computing/computer-science/informationtheory)
 
-
-
 ## Other stuff/software
 * [Turning Vim into a modern Python IDE](http://www.sontek.net/blog/2011/05/07/turning_vim_into_a_modern_python_ide.html)
 * [VIM as Python IDE](http://blog.dispatched.ch/2009/05/24/vim-as-python-ide/)
 * [Version Control with Git](http://software-carpentry.org/v5/novice/git/index.html)
 * [GitHub for Beginners](http://readwrite.com/2013/09/30/understanding-github-a-journey-for-beginners-part-1#awesm=~oCgej176029i97)
 * [KnitR in a Nutshell](http://kbroman.org/knitr_knutshell/)
+
+## Fun stuff
+* [Data Analysis Cartoons](http://stats.stackexchange.com/questions/423/what-is-your-favorite-data-analysis-cartoon)

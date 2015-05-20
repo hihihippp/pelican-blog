@@ -102,7 +102,8 @@ body {
 .postsummary {
     font-family: Merriweather;
     font-weight: 300;
-    line-height: 1.3em;
+    line-height: 1.5em;
+    font-size: 1em;
 }
 
 .post {

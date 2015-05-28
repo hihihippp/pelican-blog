@@ -1,3 +1,9 @@
 Title: CV
+<!-- Template: publication -->
 
-Here goes my CV
+
+I'm currently updating my CV!
+
+For a list of publications, see this [PDF](pubs.pdf).
+
+

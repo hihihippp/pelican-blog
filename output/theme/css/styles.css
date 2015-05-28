@@ -64,16 +64,18 @@ body {
 
 .menu {
     font-size: 1.3em;
-    margin-left: auto;
+/*    margin-left: auto;
     margin-right: auto;
-    width: 70%;
+*/ 
+    margin: 0 auto;
+    width: 58%;
 
     /* padding-left: 30px; */
 }
 
 .menu li {
     display: inline;
-    margin-right: 10px;
+    margin-right: 20px;
 }
 
 /* Article list on index page. */
@@ -283,6 +285,10 @@ hr.style-seven:before { /* Not really supposed to work, but does */
     border-color: black;
     border-width: 0 0 1px 0;
     border-radius: 20px;
+}
+
+.pub{
+    margin-bottom: 1.5ex
 }
 
 

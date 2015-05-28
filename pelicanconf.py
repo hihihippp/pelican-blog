@@ -51,7 +51,8 @@ PLUGIN_PATHS = ['pelican-plugins']
 
 PLUGINS = [	'pelican-knitr',
             "render_math", 
-            'liquid_tags.notebook']
+            'liquid_tags.notebook',
+            'pelican-bibtex']
 
 STATIC_PATHS = ['pages','images', 'figure']
 

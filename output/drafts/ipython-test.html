@@ -239,109 +239,221 @@ jQuery(document).ready(function($) {
 <section class="content">
 
   <h3 class="posttitle">
-    <a class="nodec" href="/articles/mongodb-in-r.html" rel="bookmark" title="Permalink to Accessing MongoDB from R with mongolite">
-      Accessing MongoDB from R with mongolite
+    <a class="nodec" href="/drafts/ipython-test.html" rel="bookmark" title="Permalink to Test Ipython">
+      Test Ipython
     </a>
   </h3>
 
   <div class="postinfo">
-    <p class="published" title="2015-05-18T00:00:00+02:00">
-      Mon 18 May 2015
+    <p class="published" title="2014-10-10T00:00:00+02:00">
+      Fri 10 October 2014
     </p>
 
   </div><!-- .postinfo -->
 
   <div class="article">
-    <p>Recently, I have moved away from text files as data storage, and started using <a href="https://www.mongodb.org/">MongoDB</a>. While there are already two R packages (<code>RMongo</code> and <code>rmongodb</code>) interfacing with MongoDB, I was never completed satified with them - especially in comparison to the excellent <a href="http://api.mongodb.org/python/current/">PyMongo</a>. A couple of days ago, a new package, <code>mongolite</code>, was released and seems very promising.</p>
-<p>Here, I quickly want to showcase some of the functions of mongolite, using <a href="http://en.wikipedia.org/wiki/Iris_flower_data_set">Fisher's Iris data set</a>. </p>
-<div class="highlight"><pre>data<span class="p">(</span>iris<span class="p">)</span>
-<span class="c1"># remove . to avoid problems with MongoDBs naming structure</span>
-<span class="kp">names</span><span class="p">(</span>iris<span class="p">)[</span><span class="m">1</span><span class="o">:</span><span class="m">4</span><span class="p">]</span> <span class="o">=</span> <span class="kp">gsub</span><span class="p">(</span><span class="s">&quot;[.]&quot;</span><span class="p">,</span><span class="s">&quot;&quot;</span><span class="p">,</span><span class="kp">names</span><span class="p">(</span>iris<span class="p">)[</span><span class="m">1</span><span class="o">:</span><span class="m">4</span><span class="p">]</span> <span class="p">)</span> 
-<span class="kp">head</span><span class="p">(</span>iris<span class="p">)</span>
+    <p>This is a test.</p>
+<p>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[10]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class="highlight-ipynb"><pre class="ipynb"><span class="kn">import</span> <span class="nn">pandas</span> <span class="kn">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="kn">as</span> <span class="nn">plt</span>
+<span class="o">%</span><span class="k">matplotlib</span> <span class="n">inline</span>
 </pre></div>
 
+</div>
+</div>
+</div>
 
-<div class="highlight"><pre>##   SepalLength SepalWidth PetalLength PetalWidth Species
-## 1         5.1        3.5         1.4        0.2  setosa
-## 2         4.9        3.0         1.4        0.2  setosa
-## 3         4.7        3.2         1.3        0.2  setosa
-## 4         4.6        3.1         1.5        0.2  setosa
-## 5         5.0        3.6         1.4        0.2  setosa
-## 6         5.4        3.9         1.7        0.4  setosa
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>This is a test if the notebook works and stuff.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[11]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class="highlight-ipynb"><pre class="ipynb"><span class="n">xs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+<span class="n">ys</span> <span class="o">=</span> <span class="n">xs</span> <span class="o">**</span> <span class="mi">2</span>
 </pre></div>
 
+</div>
+</div>
+</div>
 
-<p>First, we need to insert the data from R into a new collection in MongoDB. This is done by first establishing a connection to the collection in the database, and then calling the <code>insert</code> function on the connection handler. </p>
-<div class="highlight"><pre><span class="kn">library</span><span class="p">(</span>mongolite<span class="p">)</span>
-<span class="kt">c</span> <span class="o">=</span> mongo<span class="p">(</span>collection <span class="o">=</span> <span class="s">&quot;iris&quot;</span><span class="p">,</span> db <span class="o">=</span> <span class="s">&quot;tutorials&quot;</span><span class="p">)</span>
-<span class="kt">c</span><span class="o">$</span>insert<span class="p">(</span>iris<span class="p">)</span>
-<span class="c1">## </span>
-Complete<span class="o">!</span> Processed total of <span class="m">150</span> rows.
-<span class="c1">## [1] TRUE</span>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[22]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class="highlight-ipynb"><pre class="ipynb"><span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">()</span>
+<span class="n">df</span><span class="p">[</span><span class="s">&quot;xs&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">xs</span>
+<span class="n">df</span><span class="p">[</span><span class="s">&quot;ys&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ys</span>
 </pre></div>
 
+</div>
+</div>
+</div>
 
-<p>We get some nice feedback from the function, showing us that we inserted 150 rows (which is the total number of rows in the Iris data set). Let's start exploring the data with <code>mongolite</code>. You can easily get the total number of rows, as well as the unique values within the <code>Species</code> column/field: </p>
-<div class="highlight"><pre><span class="kt">c</span><span class="o">$</span>count<span class="p">()</span>
-<span class="c1">## [1] 150</span>
-<span class="kt">c</span><span class="o">$</span>distinct<span class="p">(</span><span class="s">&quot;Species&quot;</span><span class="p">)</span>
-<span class="c1">## [1] &quot;setosa&quot;     &quot;versicolor&quot; &quot;virginica&quot;</span>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[29]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class="highlight-ipynb"><pre class="ipynb"><span class="n">df</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">kind</span><span class="o">=</span><span class="s">&#39;scatter&#39;</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="s">&#39;xs&#39;</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="s">&#39;ys&#39;</span><span class="p">)</span>
 </pre></div>
 
+</div>
+</div>
+</div>
 
-<p>It's also possible to utilize MongoDB's aggregate function through <code>$aggregate</code>:</p>
-<div class="highlight"><pre><span class="kt">c</span><span class="o">$</span>aggregate<span class="p">(</span><span class="s">&#39;[{&quot;$group&quot;: {</span>
-<span class="s">                &quot;_id&quot;:&quot;$Species&quot;, </span>
-<span class="s">                &quot;count&quot;: {&quot;$sum&quot;:1}, </span>
-<span class="s">                &quot;avgPetalLength&quot;:{&quot;$avg&quot;:&quot;$PetalLength&quot;}</span>
-<span class="s">              }}]&#39;</span><span class="p">)</span>
-</pre></div>
+<div class="output_wrapper">
+<div class="output">
 
 
-<div class="highlight"><pre>## 
- Found 3 records...
- Imported 3 records. Simplifying into dataframe...
-</pre></div>
+<div class="output_area"><div class="prompt output_prompt">Out[29]:</div>
 
 
-<div class="highlight"><pre>##          _id count avgPetalLength
-## 1  virginica    50          5.552
-## 2 versicolor    50          4.260
-## 3     setosa    50          1.462
-</pre></div>
+<div class="output_text output_subarea output_pyout">
+<pre>
+&lt;matplotlib.axes._subplots.AxesSubplot at 0x1078b7650&gt;
+</pre>
+</div>
+
+</div>
+
+<div class="output_area"><div class="prompt"></div>
 
 
-<p>Of course, with a small data set such as the Iris data, there is no drawback in simply doing the aggregating in <code>dplyr</code>, but if you are dealing with a big data set, querying the MongoDB database directly might give you some performance benefits, as not all the data has to be loaded into memory.</p>
-<div class="highlight"><pre>iris <span class="o">%&gt;%</span>
-  group_by<span class="p">(</span>Species<span class="p">)</span> <span class="o">%&gt;%</span>
-  summarise<span class="p">(</span>count <span class="o">=</span> n<span class="p">(),</span> avg <span class="o">=</span> <span class="kp">mean</span><span class="p">(</span>PetalLength<span class="p">))</span>
-</pre></div>
+<div class="output_png output_subarea ">
+<img src="data:image/png;base64,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
+acL+HxZoZJ9AK7lNAAAAAElFTkSuQmCC
+"
+>
+</div>
 
+</div>
 
-<div class="highlight"><pre>## Source: local data frame [3 x 3]
-## 
-##      Species count   avg
-## 1     setosa    50 1.462
-## 2 versicolor    50 4.260
-## 3  virginica    50 5.552
-</pre></div>
+</div>
+</div>
 
-
-<p>Similary, let's suppose we don't need all columns/fields for an analysis. For example, maybe we're only interesting in the sepal width for one particular analysis. Instead of loading all the data into memory, we can use <code>mongolite</code> to only return chosen fields:</p>
-<div class="highlight"><pre>sw <span class="o">=</span> <span class="kt">c</span><span class="o">$</span>find<span class="p">(</span><span class="s">&#39;{}&#39;</span><span class="p">,</span> <span class="s">&#39;{&quot;SepalWidth&quot;: 1, &quot;Species&quot;: 1, &quot;_id&quot;: 0}&#39;</span><span class="p">)</span>
-<span class="c1">## </span>
- Found <span class="m">150</span> records...
- Imported <span class="m">150</span> records. Simplifying into dataframe...
-</pre></div>
-
-
-<div class="highlight"><pre>ggplot<span class="p">(</span>sw<span class="p">,</span> aes<span class="p">(</span>x <span class="o">=</span> Species<span class="p">,</span> y <span class="o">=</span> SepalWidth<span class="p">))</span> <span class="o">+</span> 
-         geom_boxplot<span class="p">()</span>
-</pre></div>
-
-
-<p><img alt="plot of chunk sepalwidth_plot" src="../figure/mongolite/sepalwidth_plot-1.png" /> </p>
-<p>Of course, you can also update and remove entries in your database, as well as other functions. If you'd like to know more, have a look at the package on <a href="https://github.com/jeroenooms/mongolite">github</a> and <a href="http://cran.r-project.org/web/packages/mongolite/">CRAN</a>.</p>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>test</p>
+</div>
+</div>
+</div></p>
   </div><!-- .content -->
 
 </section>

@@ -65,3 +65,9 @@ PUBLICATIONS_SRC = 'content/pubs.bib'
 OUTPUT_RETENTION = [".htaccess"]   
 # Uncomment following line if you want document-relative URLs when developing
 RELATIVE_URLS = True
+
+# EXTRA_HEADER = open('_nb_header.html').read()
+EXTRA_HEADER = open('_nb_header.html').read().replace(
+"highlight ","highlight-ipynb ")
+
+

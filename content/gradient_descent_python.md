@@ -1,6 +1,6 @@
-Title: Gradient Descent in Python
+Title: An Introduction to Gradient Descent in Python
 Slug: python-gradient-descent
-Date: 2015-06-03
+Date: 2015-08-05
 Status: Draft
 
 {% notebook gradient_descent.ipynb %}

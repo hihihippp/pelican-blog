@@ -180,6 +180,7 @@ sub {
 .article p {
     line-height: 1.6em;
     margin-bottom: 1.5em;
+
 }
 
 /* Headers. */
@@ -292,4 +293,18 @@ hr.style-seven:before { /* Not really supposed to work, but does */
 }
 
  /*IPYTHON */
+/* for bokeh plots*/
+.rendered_html tr,
+.rendered_html th,
+.rendered_html td {
+    border:0;    
+}
 
+.rendered_html table{
+    background-color: white;
+    border:0;
+}
+
+.MathJax_Display{
+    text-align: center !important;
+}

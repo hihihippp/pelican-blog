@@ -17,6 +17,13 @@ theme_update(plot.background = element_rect(fill = "transparent", colour = NA))
 opts_chunk$set(dev.args=list(bg="transparent"))
 ```
 
+Model Diagnostics:
+
+* Leverage: difference of individual data point to mean of data (on x-axis)
+* Influence:leverage $\times$ discrepancy. How much does model change if data point is removed?
+
+
+
 ```{r, echo=FALSE}
 data(anscombe)
 

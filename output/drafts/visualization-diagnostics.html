@@ -259,6 +259,11 @@ jQuery(document).ready(function($) {
 </pre></div>
 
 
+<p>Model Diagnostics:</p>
+<ul>
+<li>Leverage: difference of individual data point to mean of data (on x-axis)</li>
+<li>Influence:leverage <span class="math">\(\times\)</span> discrepancy. How much does model change if data point is removed?</li>
+</ul>
 <p>Visualizing data matters: Bla bla</p>
 <p><a href="https://www.nosm.ca/uploadedFiles/Research/Northern_Health_Research_Conference/Past_Conferences/2008/WEAVER%20Bruce.pdf">read this</a></p>
 <div class="highlight"><pre><span class="kp">head</span><span class="p">(</span>df<span class="p">)</span>
@@ -371,8 +376,7 @@ Values over 1, or over <span class="math">\(4/n\)</span>, measures influence</p>
 </pre></div>
 
 
-<div class="highlight"><pre>## Warning in loop_apply(n, do.ply): Removed 1 rows containing missing values
-## (geom_point).
+<div class="highlight"><pre>## Warning: Removed 1 rows containing missing values (geom_point).
 </pre></div>
 
 

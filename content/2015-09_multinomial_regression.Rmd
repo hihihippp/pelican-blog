@@ -1,0 +1,110 @@
+Title: Multinomial Logistic Regression
+Date: 2015-08-18
+Tags: R, logistic regression, classifier, classification, multinomial
+Slug: multinomial-regression
+Status: Draft 
+
+```{r loadPackages, message=FALSE}
+require(foreign)
+require(nnet)
+require(ggplot2)
+require(tidyr)
+library(dplyr)
+library(pander)
+
+```
+
+This is based on this [tutorial](http://www.ats.ucla.edu/stat/r/dae/mlogit.htm).
+```{r loadData}
+
+ml <- read.dta("http://www.ats.ucla.edu/stat/data/hsbdemo.dta") %>% select(prog, ses, write)
+
+head(ml)
+```
+
+"The outcome variable is prog, program type. The predictor variables are social economic status, ses, a three-level categorical variable and writing score, write, a continuous variable"
+
+```{r}
+ml %>% group_by(prog) %>%
+  summarise(write_mean = round(mean(write),2), write_sd = round(sd(write),2))
+```
+
+```{r}
+round(prop.table(with(ml, table(ses, prog)),1),2)
+```
+
+Just like in other logistic regression, we have to choose a base level, i.e. the level we want to compare the other level(s) too. Here, we choose the `academic` level of `prog`.
+
+```{r}
+ml$prog2 <- relevel(ml$prog, ref = "academic")
+mod <- multinom(prog2 ~ ses + write, data = ml)
+```
+
+The model prints some output with regard to its iteration, and includes the negative log-likelihood as a measure of model fit. The Residual Deviance of the model is twice the log-likelihood, and can be seen in the summary output:
+
+```{r}
+summary(mod)
+```
+
+```{r, echo=FALSE}
+tidied = as.data.frame(coef(mod)) %>% add_rownames('prog') %>% rename(intercept = `(Intercept)` )
+```
+
+We also see a row for coefficients and standard errors for each level we want to compare. The first row compares `general` to our baselevel `academic`, and the second `vocation` to `academic`. As we can see, there are four coefficients: The intercept, one coefficient for `ses` middle and one for `ses` high, and the final for the writing score `score`. This gives us the following formulaes for the the two comparisons:
+
+$$
+ln\left(\frac{P(prog=general)}{P(prog=academic)}\right) = b_{10} + b_{11}(ses=middle) + b_{12}(ses=high) + b_{13}write$$
+$$
+ln\left(\frac{P(prog=vocation)}{P(prog=academic)}\right) = b_{20} + b_{21}(ses=middle) + b_{22}(ses=high) + b_{23}write
+$$
+
+where:
+
+* $b_{i0}$ is the intercept.
+* $b_{i1}$ is the coefficient if the SES level is middle.
+* $b_{i2}$ is the coefficient if the SES level is high.
+* $b_{i3}$ is the coefficient for the writing score.
+* and $i$ is the row depending on which level you want to compare.
+
+Putting in the actual coefficients gives us the following formula for cmoparing general to academic:
+
+$$
+ln\left(\frac{P(prog=general)}{P(prog=academic)}\right) = 2.85 - 0.53(ses=middle) - 1.16(ses=high) - 0.06 \times write$$
+
+
+We can now use this to interpret the coefficients. As SES is a categorical predictor, we have to interpret the coefficient for both SES coefficients in comparison to the base level of SES, *low*. Let's use the first row, comparing general to academic:
+
+* The coefficient for `write` is `r round(tidied[1,]$write, 2)`, meaning that a one unit increase in the writing scores decreases the log odds of being in the general program compared to the academic program by that amount.
+
+* The coefficient for `sesmiddle` is `r round(tidied[1,]$sesmiddle, 2)`, meaning that having a SES status of *middle* compared to *low* decreases the log odds of being in the general program compared to the academic program by that amount. In other words, you are more likely to be in the academic program if your SES level is middle than low.
+
+* The coefficient for `seshigh` is `r round(tidied[1,]$seshigh, 2)`, meaning that having a SES status of *high* compared to *low* decreases the log odds of being in the general program compared to the academic program by that amount. In other words, you are more likely to be in the academic program if your SES level is middle than low.
+
+
+Getting out of the log space: So far, we're only talking about log odds. To get the actual odds, you can exponentiate the coefficients. For more on the relationship between probability, log odds and odds and how to interpet them, see [this tutorial](http://www.ats.ucla.edu/stat/mult_pkg/faq/general/odds_ratio.htm).
+
+## Testing for significance
+
+Since the `multinom` package does not give us any information on those sweet, sweet p-values, we can calculate them ourselves using a Wald test (For more information of this test, see [this explanation](http://stats.stackexchange.com/questions/60074/wald-test-for-logistic-regression)). We first need to calculate z-scores, by dividing the coefficients by the standard errors of those coefficients.
+
+```{r}
+z = with(summary(mod), coefficients/standard.errors)
+z
+```
+
+These z-scores are assumed to be normally distributed, so we can use a t-test to test for significance (in this case, a two-tailed t-test).
+
+```{r}
+p <- (1 - pnorm(abs(z), mean = 0, sd = 1)) * 2
+p
+```
+
+```{r}
+p %>% data.frame() %>% 
+  add_rownames('prog') %>% 
+  gather(variable, p.value, -prog) %>% 
+  mutate(sig = ifelse(p.value<0.05,'*', 'n.s.'), 
+         p.value = round(p.value, 4)) %>%
+  arrange(prog) %>% 
+  pander()
+```

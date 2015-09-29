@@ -82,6 +82,7 @@ body {
 
 .posttitle {
     font-size: 1.6em;
+    font-weight: bold;
 }
 
 .pagetitle {
@@ -211,7 +212,7 @@ sub {
 .content * img {
     display: block;
     margin: 0 auto 0 auto;
-    max-width: 600px;
+    max-width: 800px;
     height: auto;
 }
 

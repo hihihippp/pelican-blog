@@ -63,6 +63,7 @@ PUBLICATIONS_SRC = 'content/pubs.bib'
 
 # FILES_TO_COPY = (('content/pages/.htaccess', '.htaccess'))
 OUTPUT_RETENTION = [".htaccess"]   
+IGNORE_FILES = ['*.py', '*.bib']
 # Uncomment following line if you want document-relative URLs when developing
 RELATIVE_URLS = True
 
